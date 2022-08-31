@@ -11,6 +11,8 @@ class Blockchain {
       prevHash: '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7',
       timestamp: Date.now(),
       data: 'Genesis Block',
+      difficulty: 0,
+      nonce: 0,
     };
     this.genesis = new Block(genesis ?? defaultGenesis);
     this.chain.push(this.genesis);
@@ -58,6 +60,8 @@ class Blockchain {
       prevHash: lastBlock.hash,
       timestamp: Date.now(),
       data,
+      difficulty: 0,
+      nonce: 0,
     });
     return newBlock;
   }

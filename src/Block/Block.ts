@@ -12,22 +12,22 @@ export default class Block implements IBlock {
 
   public data: string;
 
-  // public difficulty: number;
+  public difficulty: number;
 
-  // public nonce: number;
+  public nonce: number;
 
-  constructor({ index, prevHash, timestamp, data }: HashlessBlock) {
+  constructor({ index, prevHash, timestamp, data, difficulty, nonce }: HashlessBlock) {
     this.index = index;
     this.prevHash = prevHash;
     this.timestamp = timestamp;
     this.data = data;
-    // this.difficulty = difficulty;
-    // this.nonce = nonce;
-    this.hash = Block.calculateHash({ index, prevHash, timestamp, data });
+    this.difficulty = difficulty;
+    this.nonce = nonce;
+    this.hash = Block.calculateHash({ index, prevHash, timestamp, data, difficulty, nonce });
   }
 
-  static calculateHash({ index, prevHash, timestamp, data }: HashlessBlock): string {
-    return createHash('sha256').update(`${index}${prevHash}${timestamp}${data}`).digest('hex');
+  static calculateHash({ index, prevHash, timestamp, data, difficulty, nonce }: HashlessBlock): string {
+    return createHash('sha256').update(`${index}${prevHash}${timestamp}${data}${difficulty}${nonce}`).digest('hex');
   }
 
   static isValidBlockStructure(block: IBlock): boolean {
@@ -36,10 +36,9 @@ export default class Block implements IBlock {
       typeof block.prevHash === 'string' &&
       typeof block.timestamp === 'number' &&
       typeof block.data === 'string' &&
-      typeof block.hash === 'string'
-      // &&
-      // typeof block.difficulty === 'number' &&
-      // typeof block.nonce === 'number'
+      typeof block.hash === 'string' &&
+      typeof block.difficulty === 'number' &&
+      typeof block.nonce === 'number'
     );
   }
 
@@ -49,7 +48,9 @@ export default class Block implements IBlock {
       block.prevHash === otherBlock.prevHash &&
       block.timestamp === otherBlock.timestamp &&
       block.data === otherBlock.data &&
-      block.hash === otherBlock.hash
+      block.hash === otherBlock.hash &&
+      block.difficulty === otherBlock.difficulty &&
+      block.nonce === otherBlock.nonce
     );
   }
 
@@ -59,7 +60,9 @@ export default class Block implements IBlock {
       this.prevHash === otherBlock.prevHash &&
       this.timestamp === otherBlock.timestamp &&
       this.data === otherBlock.data &&
-      this.hash === otherBlock.hash
+      this.hash === otherBlock.hash &&
+      this.difficulty === otherBlock.difficulty &&
+      this.nonce === otherBlock.nonce
     );
   }
 
@@ -73,10 +76,7 @@ export default class Block implements IBlock {
     if (
       newBlock.hash !==
       Block.calculateHash({
-        index: newBlock.index,
-        prevHash: newBlock.prevHash,
-        timestamp: newBlock.timestamp,
-        data: newBlock.data,
+        ...newBlock,
       })
     ) {
       return false;

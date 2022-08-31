@@ -4,8 +4,8 @@ export interface IBlock {
   prevHash: string;
   timestamp: number;
   data: string;
-  // difficulty: number;
-  // nonce: number;
+  difficulty: number;
+  nonce: number;
 }
 
 export type HashlessBlock = Omit<IBlock, 'hash'>;
