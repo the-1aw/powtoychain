@@ -1,5 +1,5 @@
 import { Block } from '../Block';
-import Blockchain from './Blockcain';
+import Blockchain, { BLOCK_GENERATION_INTERVAL, DIFFICULTY_ADJUSTMENT_INTERVAL } from './Blockcain';
 
 describe('Block testing', () => {
   it('Should create a blockchain with a valid genesis block', () => {
@@ -39,5 +39,15 @@ describe('Block testing', () => {
     expect(smallestChain.length).toBeLessThan(longestChain.length);
     smallestChain.replaceChain(longestChain.content);
     expect(smallestChain.length).toBe(longestChain.length);
+  });
+
+  it('Should increase difficulty', () => {
+    const chain = new Blockchain();
+    const nbBlock = 50;
+    while (chain.length < nbBlock) {
+      chain.addNewBlock(chain.generateNextBlock('some block'));
+    }
+    const { lastBlock } = chain;
+    expect(lastBlock.difficulty).toBe(nbBlock / DIFFICULTY_ADJUSTMENT_INTERVAL - 1);
   });
 });

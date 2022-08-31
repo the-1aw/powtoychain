@@ -139,15 +139,25 @@ describe('Block testing', () => {
       nonce: 0,
     });
     const newBlockWithInvalidIndex = new Block({
-      index: prevBlock.index + 1,
-      prevHash: createHash('sha256').update('somestring').digest('hex'),
+      index: prevBlock.index + 10,
+      prevHash: prevBlock.hash,
       timestamp: Date.now(),
       data: 'Some data',
       difficulty: 0,
       nonce: 0,
     });
+    const newBlockWithInvalidHash = new Block({
+      index: prevBlock.index + 1,
+      prevHash: prevBlock.hash,
+      timestamp: Date.now(),
+      data: 'Some data',
+      difficulty: 0,
+      nonce: 0,
+    });
+    newBlockWithInvalidHash.hash = createHash('sha256').update('somestring').digest('hex');
     expect(Block.isValidNewBlock(prevBlock, newBlockWithInvalidIndex)).toBe(false);
     expect(Block.isValidNewBlock(prevBlock, newBlockWithInvalidPrevHash)).toBe(false);
+    expect(Block.isValidNewBlock(prevBlock, newBlockWithInvalidHash)).toBe(false);
   });
 
   it('Should compare 2 blocks', () => {

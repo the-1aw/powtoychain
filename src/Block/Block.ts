@@ -1,4 +1,5 @@
 import { createHash } from 'crypto';
+import hashMatchesDifficulty from '../hash';
 import type { IBlock, HashlessBlock } from './types';
 
 export default class Block implements IBlock {
@@ -73,14 +74,42 @@ export default class Block implements IBlock {
     if (newBlock.prevHash !== prevBlock.hash) {
       return false;
     }
+    if (!newBlock.hasValidHash()) {
+      return false;
+    }
+    if (!Block.isValidTimestamp(prevBlock, newBlock)) {
+      return false;
+    }
+    return true;
+  }
+
+  static hasValidHash(block: Block): boolean {
     if (
-      newBlock.hash !==
+      block.hash !==
       Block.calculateHash({
-        ...newBlock,
+        ...block,
       })
     ) {
       return false;
     }
+    if (!hashMatchesDifficulty(block.hash, block.difficulty)) return false;
     return true;
+  }
+
+  hasValidHash(): boolean {
+    if (
+      this.hash !==
+      Block.calculateHash({
+        ...this,
+      })
+    ) {
+      return false;
+    }
+    if (!hashMatchesDifficulty(this.hash, this.difficulty)) return false;
+    return true;
+  }
+
+  static isValidTimestamp(newBlock: Block, prevBlock: Block): boolean {
+    return prevBlock.timestamp - 60 < newBlock.timestamp && newBlock.timestamp - 60 < Date.now();
   }
 }
