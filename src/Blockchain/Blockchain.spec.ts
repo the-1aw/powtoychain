@@ -1,5 +1,5 @@
 import { Block } from '../Block';
-import Blockchain, { BLOCK_GENERATION_INTERVAL, DIFFICULTY_ADJUSTMENT_INTERVAL } from './Blockcain';
+import Blockchain, { DIFFICULTY_ADJUSTMENT_INTERVAL } from './Blockcain';
 
 const now = Date.now();
 const defaultGenesis = new Block({
