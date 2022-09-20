@@ -1,9 +1,9 @@
 {
-  "name": "@the-1aw/blib",
+  "name": "@the-1aw/powtoychain",
   "version": "0.0.1",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "repository": "git@github.com:the-1aw/blib.git",
+  "repository": "git@github.com:the-1aw/powtoychain.git",
   "author": "the-1aw <bguilliod@gmail.com>",
   "license": "MIT",
   "private": false,
