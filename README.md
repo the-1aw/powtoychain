@@ -11,13 +11,14 @@ Mendatory:
 - [x] Block structure
 - [x] Blockchain base structure
 - [x] Transactions base structure
-- [ ] Minimum transaction base structure testing
-- [ ] Template Block content type
-- [ ] Template Blockchain with Block content type
+- [x] Minimum transaction base structure testing
+- [ ] Use transactions array as block data type
 - [ ] Wallet Manager
 - [ ] Refact transaction structure to use wallets
 - [ ] Refact/Reorganise dependencies and ownership between Blockchain Transactions and Wallet
 
 Optional:
 
+- [ ] Template Block content type
+- [ ] Template Blockchain with Block content type
 - [ ] Add custom error policy
