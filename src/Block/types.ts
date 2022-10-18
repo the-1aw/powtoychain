@@ -8,4 +8,9 @@ export interface IBlock<T = string> {
   nonce: number;
 }
 
-export type HashlessBlock<T = string> = Omit<IBlock<T>, 'hash'>;
+export interface IBlockDataFunctions<T> {
+  serializeData?: (data: T) => string;
+  compareData?: (Adata: T, Bdata: T) => boolean;
+}
+
+export type HashlessBlock<T = string> = Omit<IBlock<T> & IBlockDataFunctions<T>, 'hash'>;

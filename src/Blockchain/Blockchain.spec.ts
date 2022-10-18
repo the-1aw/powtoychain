@@ -1,17 +1,18 @@
 import { Block } from '../Block';
 import Blockchain, { BLOCK_GENERATION_INTERVAL, DIFFICULTY_ADJUSTMENT_INTERVAL } from './Blockcain';
 
+const now = Date.now();
+const defaultGenesis = new Block({
+  index: 0,
+  prevHash: '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7',
+  timestamp: now,
+  data: 'Genesis Block',
+  difficulty: 0,
+  nonce: 0,
+});
+
 describe('Block testing', () => {
   it('Should create a blockchain with a valid genesis block', () => {
-    const now = Date.now();
-    const defaultGenesis = new Block({
-      index: 0,
-      prevHash: '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7',
-      timestamp: now,
-      data: 'Genesis Block',
-      difficulty: 0,
-      nonce: 0,
-    });
     const chain = new Blockchain(defaultGenesis);
     const genesis = chain.lastBlock;
 
@@ -22,7 +23,7 @@ describe('Block testing', () => {
   });
 
   it('Should create a blockchain and add new block', () => {
-    const chain = new Blockchain();
+    const chain = new Blockchain(defaultGenesis);
     const newBlock = chain.generateNextBlock('first non genesis block');
     const isInsertValid = chain.addNewBlock(newBlock);
     expect(isInsertValid).toBe(true);
@@ -31,9 +32,9 @@ describe('Block testing', () => {
   });
 
   it('Should be able to replace chain', () => {
-    const smallestChain = new Blockchain();
+    const smallestChain = new Blockchain(defaultGenesis);
     smallestChain.addNewBlock(smallestChain.generateNextBlock('some block'));
-    const longestChain = new Blockchain();
+    const longestChain = new Blockchain(defaultGenesis);
     longestChain.addNewBlock(longestChain.generateNextBlock('some block'));
     longestChain.addNewBlock(longestChain.generateNextBlock('some block'));
     expect(smallestChain.length).toBeLessThan(longestChain.length);
@@ -42,7 +43,7 @@ describe('Block testing', () => {
   });
 
   it('Should increase difficulty', () => {
-    const chain = new Blockchain();
+    const chain = new Blockchain(defaultGenesis);
     const nbBlock = 50;
     while (chain.length < nbBlock) {
       chain.addNewBlock(chain.generateNextBlock('some block'));
