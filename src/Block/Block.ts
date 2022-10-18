@@ -1,8 +1,8 @@
 import { createHash } from 'crypto';
 import hashMatchesDifficulty from '../hash';
-import type { IBlock, HashlessBlock } from './types';
+import type { IBlock, HashlessBlock, IBlockDataFunctions } from './types';
 
-export default class Block<DataType = string> implements IBlock<DataType> {
+export default class Block<DataType> implements IBlock<DataType> {
   public hash: string;
 
   public index: number;
@@ -17,13 +17,28 @@ export default class Block<DataType = string> implements IBlock<DataType> {
 
   public nonce: number;
 
-  constructor({ index, prevHash, timestamp, data, difficulty, nonce }: HashlessBlock<DataType>) {
+  public dataFunctions: Required<IBlockDataFunctions<DataType>>;
+
+  constructor({
+    index,
+    prevHash,
+    timestamp,
+    data,
+    difficulty,
+    nonce,
+    serializeData = (d) => `${d}`,
+    compareData = (a, b) => a === b,
+  }: HashlessBlock<DataType>) {
     this.index = index;
     this.prevHash = prevHash;
     this.timestamp = timestamp;
     this.data = data;
     this.difficulty = difficulty;
     this.nonce = nonce;
+    this.dataFunctions = {
+      serializeData,
+      compareData,
+    };
     this.hash = Block.calculateHash({ index, prevHash, timestamp, data, difficulty, nonce });
   }
 
@@ -67,33 +82,26 @@ export default class Block<DataType = string> implements IBlock<DataType> {
     );
   }
 
-  compare(
-    otherBlock: Block<DataType>,
-    compareData: (Adata: DataType, Bdata: DataType) => boolean = (a, b) => a === b,
-  ): boolean {
+  compare(otherBlock: Block<DataType>): boolean {
     return (
       this.index === otherBlock.index &&
       this.prevHash === otherBlock.prevHash &&
       this.timestamp === otherBlock.timestamp &&
-      compareData(this.data, otherBlock.data) &&
+      this.dataFunctions.compareData(this.data, otherBlock.data) &&
       this.hash === otherBlock.hash &&
       this.difficulty === otherBlock.difficulty &&
       this.nonce === otherBlock.nonce
     );
   }
 
-  static isValidNewBlock<T>(
-    prevBlock: Block<T>,
-    newBlock: Block<T>,
-    serializeData: (data: T) => string = (d) => `${d}`,
-  ): boolean {
+  static isValidNewBlock<T>(prevBlock: Block<T>, newBlock: Block<T>): boolean {
     if (newBlock.index !== prevBlock.index + 1) {
       return false;
     }
     if (newBlock.prevHash !== prevBlock.hash) {
       return false;
     }
-    if (!newBlock.hasValidHash(serializeData)) {
+    if (!newBlock.hasValidHash()) {
       return false;
     }
     if (!Block.isValidTimestamp(prevBlock, newBlock)) {
@@ -118,14 +126,14 @@ export default class Block<DataType = string> implements IBlock<DataType> {
     return true;
   }
 
-  hasValidHash(serializeData: (data: DataType) => string = (d) => `${d}`): boolean {
+  hasValidHash(): boolean {
     if (
       this.hash !==
       Block.calculateHash(
         {
           ...this,
         },
-        serializeData,
+        this.dataFunctions.serializeData,
       )
     ) {
       return false;
