@@ -1,11 +1,11 @@
-export interface IBlock {
+export interface IBlock<T = string> {
   hash: string;
   index: number;
   prevHash: string;
   timestamp: number;
-  data: string;
+  data: T;
   difficulty: number;
   nonce: number;
 }
 
-export type HashlessBlock = Omit<IBlock, 'hash'>;
+export type HashlessBlock<T = string> = Omit<IBlock<T>, 'hash'>;
