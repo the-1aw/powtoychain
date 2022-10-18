@@ -8,17 +8,33 @@ This project is only meant as learning opornity and should not be concidered as 
 
 Mendatory:
 
+### Block
+
 - [x] Block structure
+- [x] Template Block content type
+- [ ] Add tests with differents data type and use of IBlockDataFunctions
+
+### Blockchain
+
 - [x] Blockchain base structure
+- [x] Template Blockchain with Block content type
+- [ ] Add tests with differents data type and use of IBlockDataFunctions
+
+### Transactions
+
 - [x] Transactions base structure
 - [x] Minimum transaction base structure testing
-- [ ] Use transactions array as block data type
+- [ ] Add top level functionnal test with transaction array as block data type
+
+### Wallet
+
 - [ ] Wallet Manager
 - [ ] Refact transaction structure to use wallets
+
+### Optimization
+
 - [ ] Refact/Reorganise dependencies and ownership between Blockchain Transactions and Wallet
 
 Optional:
 
-- [ ] Template Block content type
-- [ ] Template Blockchain with Block content type
 - [ ] Add custom error policy
