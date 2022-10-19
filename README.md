@@ -12,7 +12,7 @@ Mendatory:
 
 - [x] Block structure
 - [x] Template Block content type
-- [ ] Add tests with differents data type and use of IBlockDataFunctions
+- [x] Add tests with differents data type and use of IBlockDataFunctions
 
 ### Blockchain
 
