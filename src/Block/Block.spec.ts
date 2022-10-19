@@ -2,6 +2,8 @@ import { createHash } from 'crypto';
 import Block from './Block';
 import { IBlock } from './types';
 
+const validateNumberType = (n: unknown) => typeof n === 'number';
+
 describe('Block testing', () => {
   it('Should be a valid block structure', () => {
     const blockContent: IBlock = {
@@ -14,6 +16,16 @@ describe('Block testing', () => {
       nonce: 0,
     };
     expect(Block.isValidBlockStructure(blockContent)).toBe(true);
+    const templatedBlockContent: IBlock<number> = {
+      index: 0,
+      prevHash: createHash('sha256').update('somestring').digest('hex'),
+      timestamp: Date.now(),
+      data: 3,
+      hash: createHash('sha256').update('somestring').digest('hex'),
+      difficulty: 0,
+      nonce: 0,
+    };
+    expect(Block.isValidBlockStructure(templatedBlockContent, validateNumberType)).toBe(true);
   });
 
   it('Should not be valid block structure', () => {
@@ -99,6 +111,19 @@ describe('Block testing', () => {
       nonce: 0,
     });
     expect(Block.isValidBlockStructure(newBlock)).toBe(true);
+    expect(Block.hasValidHash(newBlock)).toBe(true);
+    const newTemplatedBlock = new Block({
+      index: 0,
+      prevHash: createHash('sha256').update('somestring').digest('hex'),
+      timestamp: Date.now(),
+      data: 4,
+      difficulty: 0,
+      nonce: 0,
+    });
+    expect(Block.isValidBlockStructure(newTemplatedBlock, validateNumberType)).toBe(true);
+    expect(Block.hasValidHash(newTemplatedBlock)).toBe(true);
+    newTemplatedBlock.hash = 'somestring';
+    expect(Block.hasValidHash(newTemplatedBlock)).toBe(false);
   });
 
   it('Should be a valid new block', () => {
@@ -182,5 +207,26 @@ describe('Block testing', () => {
     expect(block.compare(otherBlock)).toBe(false);
     expect(Block.compare(block, sameBlock)).toBe(true);
     expect(Block.compare(block, otherBlock)).toBe(false);
+    const templatedBlock = new Block({
+      index: 0,
+      prevHash: createHash('sha256').update('somestring').digest('hex'),
+      timestamp: Date.now(),
+      data: 3,
+      difficulty: 0,
+      nonce: 0,
+    });
+    const sameTemplatedBlock = templatedBlock;
+    const otherTemplatedBlock = new Block({
+      index: 0,
+      prevHash: createHash('sha256').update('someOtherString').digest('hex'),
+      timestamp: Date.now(),
+      data: 3,
+      difficulty: 0,
+      nonce: 0,
+    });
+    expect(templatedBlock.compare(sameTemplatedBlock)).toBe(true);
+    expect(templatedBlock.compare(otherTemplatedBlock)).toBe(false);
+    expect(Block.compare(templatedBlock, sameTemplatedBlock)).toBe(true);
+    expect(Block.compare(templatedBlock, otherTemplatedBlock)).toBe(false);
   });
 });
