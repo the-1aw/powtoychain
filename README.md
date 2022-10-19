@@ -12,13 +12,13 @@ Mendatory:
 
 - [x] Block structure
 - [x] Template Block content type
-- [x] Add tests with differents data type and use of IBlockDataFunctions
+- [x] Add Block testing
 
 ### Blockchain
 
 - [x] Blockchain base structure
 - [x] Template Blockchain with Block content type
-- [ ] Add tests with differents data type and use of IBlockDataFunctions
+- [x] Add Blockchain testing
 
 ### Transactions
 

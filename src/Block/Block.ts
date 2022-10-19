@@ -2,6 +2,11 @@ import { createHash } from 'crypto';
 import hashMatchesDifficulty from '../hash';
 import type { IBlock, HashlessBlock, IBlockDataFunctions } from './types';
 
+export const defaultDataFunctions = {
+  serializeData: <T>(d: T): string => `${d}`,
+  compareData: <T>(a: T, b: T): boolean => a === b,
+};
+
 export default class Block<DataType> implements IBlock<DataType> {
   public hash: string;
 
@@ -26,8 +31,8 @@ export default class Block<DataType> implements IBlock<DataType> {
     data,
     difficulty,
     nonce,
-    serializeData = (d) => `${d}`,
-    compareData = (a, b) => a === b,
+    serializeData = defaultDataFunctions.serializeData,
+    compareData = defaultDataFunctions.compareData,
   }: HashlessBlock<DataType>) {
     this.index = index;
     this.prevHash = prevHash;
