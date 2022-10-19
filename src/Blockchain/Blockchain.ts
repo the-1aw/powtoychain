@@ -1,4 +1,4 @@
-import { Block, HashlessBlock } from '../Block';
+import { Block, HashlessBlock, defaultDataFunctions } from '../Block';
 import { IBlockDataFunctions } from '../Block/types';
 import hashMatchesDifficulty from '../hash';
 
@@ -9,18 +9,24 @@ export const EXPECTED_TIME = DIFFICULTY_ADJUSTMENT_INTERVAL * BLOCK_GENERATION_I
 class Blockchain<BlockDataType> {
   public genesis: Block<BlockDataType>;
 
+  public dataFunctions: Required<IBlockDataFunctions<BlockDataType>>;
+
   private chain: Block<BlockDataType>[] = [];
 
-  constructor({
-    data,
-    serializeData,
-    compareData,
-    index = 0,
-    prevHash = '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7',
-    timestamp = Date.now(),
-    difficulty = 0,
-    nonce = 0,
-  }: HashlessBlock<BlockDataType>) {
+  constructor(
+    {
+      data,
+      index = 0,
+      prevHash = '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7',
+      timestamp = Date.now(),
+      difficulty = 0,
+      nonce = 0,
+    }: HashlessBlock<BlockDataType>,
+    {
+      serializeData = defaultDataFunctions.serializeData,
+      compareData = defaultDataFunctions.compareData,
+    }: IBlockDataFunctions<BlockDataType> = {},
+  ) {
     this.genesis = new Block({
       index,
       prevHash,
@@ -31,6 +37,7 @@ class Blockchain<BlockDataType> {
       serializeData,
       compareData,
     });
+    this.dataFunctions = { serializeData, compareData };
     this.chain.push(this.genesis);
   }
 
@@ -84,10 +91,7 @@ class Blockchain<BlockDataType> {
     }
   }
 
-  generateNextBlock(
-    data: BlockDataType,
-    { serializeData = (d) => `${d}`, compareData = (a, b) => a === b }: IBlockDataFunctions<BlockDataType> = {},
-  ): Block<BlockDataType> {
+  generateNextBlock(data: BlockDataType): Block<BlockDataType> {
     const { lastBlock, difficulty } = this;
     const nextIndex = lastBlock.index + 1;
     const newBlock = Blockchain.findBlock({
@@ -96,8 +100,8 @@ class Blockchain<BlockDataType> {
       timestamp: Date.now(),
       data,
       difficulty,
-      serializeData,
-      compareData,
+      serializeData: this.dataFunctions.serializeData,
+      compareData: this.dataFunctions.compareData,
     });
     return newBlock;
   }
